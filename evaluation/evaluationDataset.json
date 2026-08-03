@@ -1,0 +1,27 @@
+[
+  {
+    "postTitle": "Red Fox",
+    "postContent": "The red fox is a wild forest animal.",
+    "expectedSubject": "red fox"
+  },
+  {
+    "postTitle": "Sunflower",
+    "postContent": "Sunflowers are bright yellow flowers.",
+    "expectedSubject": "sunflower"
+  },
+  {
+    "postTitle": "Golden Retriever",
+    "postContent": "Golden retrievers are friendly dogs.",
+    "expectedSubject": "golden retriever"
+  },
+  {
+    "postTitle": "Bald Eagle",
+    "postContent": "The bald eagle is a large bird of prey.",
+    "expectedSubject": "bald eagle"
+  },
+  {
+    "postTitle": "Brown Bear",
+    "postContent": "Brown bears live in forests and mountains.",
+    "expectedSubject": "brown bear"
+  }
+]
