@@ -4,6 +4,7 @@ import imageRoutes from "./imageRoutes.js";
 import blogRoutes from "./blogRoutes.js";
 import metadataRoutes from "./metadataRoutes.js";
 import matchingRoutes from "./matchingRoutes.js";
+import reviewRoutes from "./reviewRoutes.js";
 
 const router = Router();
 
@@ -17,11 +18,9 @@ router.get("/", (req, res) => {
 });
 
 router.use("/images", imageRoutes);
-
 router.use("/posts", blogRoutes);
-
 router.use("/metadata", metadataRoutes);
-
 router.use("/match", matchingRoutes);
+router.use("/review", reviewRoutes);
 
 export default router;
