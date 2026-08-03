@@ -1,29 +1,22 @@
 import { Router } from "express";
 
-import upload from "../middleware/upload.js";
-import ImageController from "../controllers/ImageController.js";
+import BlogPostController from "../controllers/BlogPostController.js";
 
 const router = Router();
 
 router.post(
-  "/upload",
-  upload.single("image"),
-  ImageController.uploadImage
+  "/",
+  BlogPostController.createPost
 );
 
 router.get(
   "/",
-  ImageController.getAllImages
+  BlogPostController.getAllPosts
 );
 
 router.get(
   "/:id",
-  ImageController.getImageById
-);
-
-router.delete(
-  "/:id",
-  ImageController.deleteImage
+  BlogPostController.getPostById
 );
 
 export default router;
