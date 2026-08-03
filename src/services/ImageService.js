@@ -3,6 +3,7 @@ import { v4 as uuid } from "uuid";
 import Image from "../models/Image.js";
 import VisionService from "./VisionService.js";
 import ImageMetadataService from "./ImageMetadataService.js";
+import ImageEmbeddingService from "./ImageEmbeddingService.js";
 
 class ImageService {
   static async uploadImage(file) {
@@ -23,6 +24,11 @@ class ImageService {
         metadata
       );
 
+      await ImageEmbeddingService.create(
+        savedImage.id,
+        metadata.caption
+      );
+
       await Image.updateStatus(
         savedImage.id,
         "COMPLETED"
@@ -30,14 +36,14 @@ class ImageService {
 
       savedImage.status = "COMPLETED";
     } catch (error) {
+      console.error(error);
+
       await Image.updateStatus(
         savedImage.id,
         "FAILED"
       );
 
       savedImage.status = "FAILED";
-
-      console.error(error);
     }
 
     return savedImage;
