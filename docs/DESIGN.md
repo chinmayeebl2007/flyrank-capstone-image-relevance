@@ -20,75 +20,87 @@ This project is not intended to build a complete frontend application. It does n
 
 ## Users
 
+- Content Writers
+- Editors
+- Content Managers
+- AI Reviewers
+- Backend Administrators
+
 ---
 
 ## Functional Requirements
+
+- Upload and store images.
+- Process images using an AI vision model.
+- Extract structured metadata from every image.
+- Validate AI responses before storing them.
+- Store image metadata in PostgreSQL.
+- Generate embeddings for image captions.
+- Generate embeddings for blog posts.
+- Perform semantic similarity search.
+- Rank images based on similarity score.
+- Reject poor recommendations using a mismatch guard.
+- Return explanations for accepted and rejected matches.
+- Allow manual approval or rejection through a Review API.
+- Track AI processing costs.
+- Process images in background jobs.
 
 ---
 
 ## Non Functional Requirements
 
+- Reliable and fault tolerant.
+- Modular backend architecture.
+- Secure API key management.
+- Fast similarity search.
+- Schema validation for all AI outputs.
+- Background processing with retry mechanism.
+- Scalable service structure.
+- Easy to extend with new AI models.
+
 ---
+
 ## High Level Workflow
 
 1. Images are collected and stored in the image dataset.
 
 2. A background processing job picks up each image and sends it to the Gemini Vision model.
 
-3. The AI analyzes the image and returns structured metadata, including:
+3. The AI analyzes the image and returns:
    - Subject
    - Category
    - Attributes
    - Caption
    - Confidence Score
 
-4. Every AI response is validated against a predefined schema. Invalid responses are rejected and retried instead of being stored.
+4. The response is validated using Zod.
 
-5. The validated image metadata is saved in the PostgreSQL database.
+5. Valid metadata is stored in PostgreSQL.
 
-6. An embedding is generated from the image caption and stored for semantic search.
+6. Image caption embeddings are generated.
 
-7. Blog posts are added to the system and embeddings are generated from their content.
+7. Blog post embeddings are generated.
 
-8. When a user requests image recommendations for a blog post, the system compares the blog post embedding with all image embeddings using semantic similarity.
+8. Semantic similarity is calculated between posts and images.
 
-9. The retrieved images are ranked from the highest similarity score to the lowest.
+9. Images are ranked according to similarity.
 
-10. Before returning the best match, the mismatch guard checks:
-    - Image category
-    - Extracted subject
-    - Confidence score
-    - Similarity threshold
+10. The mismatch guard validates:
+    - Subject
+    - Category
+    - Confidence
+    - Similarity Threshold
 
-11. If all validation rules pass, the system recommends the image with an explanation.
+11. If validation succeeds, the recommendation is returned.
 
-12. If no image satisfies the validation rules, the system returns "No confident match found" along with the reason for rejection.
+12. Otherwise, the system returns:
 
-13. A review API allows a human reviewer to inspect, approve, or reject the recommendation.
+    No confident match found
 
+13. A reviewer can approve or reject recommendations.
+
+---
 
 ## Architecture
 
----
-
-## Data Model
-
----
-
-## API Endpoints
-
----
-
-## Background Jobs
-
----
-
-## AI Components
-
----
-
-## Database Design
-
----
-
-## Future Improvements
+The system follows a layered backend architecture.
