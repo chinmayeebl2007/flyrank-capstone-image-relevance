@@ -6,6 +6,7 @@ import metadataRoutes from "./metadataRoutes.js";
 import matchingRoutes from "./matchingRoutes.js";
 import reviewRoutes from "./reviewRoutes.js";
 import backgroundJobRoutes from "./backgroundJobRoutes.js";
+import costRoutes from "./costRoutes.js";
 
 const router = Router();
 
@@ -24,5 +25,6 @@ router.use("/metadata", metadataRoutes);
 router.use("/match", matchingRoutes);
 router.use("/review", reviewRoutes);
 router.use("/jobs", backgroundJobRoutes);
+router.use("/costs", costRoutes);
 
 export default router;
