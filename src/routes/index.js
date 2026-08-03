@@ -3,6 +3,7 @@ import { Router } from "express";
 import imageRoutes from "./imageRoutes.js";
 import blogRoutes from "./blogRoutes.js";
 import metadataRoutes from "./metadataRoutes.js";
+import matchingRoutes from "./matchingRoutes.js";
 
 const router = Router();
 
@@ -20,5 +21,7 @@ router.use("/images", imageRoutes);
 router.use("/posts", blogRoutes);
 
 router.use("/metadata", metadataRoutes);
+
+router.use("/match", matchingRoutes);
 
 export default router;
