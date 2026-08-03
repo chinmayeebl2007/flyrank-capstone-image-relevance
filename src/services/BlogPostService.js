@@ -1,5 +1,7 @@
 import { v4 as uuid } from "uuid";
+
 import BlogPost from "../models/BlogPost.js";
+import PostEmbeddingService from "./PostEmbeddingService.js";
 
 class BlogPostService {
   static async createPost(data) {
@@ -9,7 +11,11 @@ class BlogPostService {
       content: data.content,
     };
 
-    return await BlogPost.create(post);
+    const savedPost = await BlogPost.create(post);
+
+    await PostEmbeddingService.create(savedPost);
+
+    return savedPost;
   }
 
   static async getAllPosts() {

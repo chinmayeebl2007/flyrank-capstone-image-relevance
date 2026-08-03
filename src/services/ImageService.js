@@ -1,5 +1,8 @@
 import { v4 as uuid } from "uuid";
+
 import Image from "../models/Image.js";
+import VisionService from "./VisionService.js";
+import ImageMetadataService from "./ImageMetadataService.js";
 
 class ImageService {
   static async uploadImage(file) {
@@ -10,7 +13,34 @@ class ImageService {
       status: "PENDING",
     };
 
-    return await Image.create(image);
+    const savedImage = await Image.create(image);
+
+    try {
+      const metadata = await VisionService.analyzeImage(savedImage.filepath);
+
+      await ImageMetadataService.save(
+        savedImage.id,
+        metadata
+      );
+
+      await Image.updateStatus(
+        savedImage.id,
+        "COMPLETED"
+      );
+
+      savedImage.status = "COMPLETED";
+    } catch (error) {
+      await Image.updateStatus(
+        savedImage.id,
+        "FAILED"
+      );
+
+      savedImage.status = "FAILED";
+
+      console.error(error);
+    }
+
+    return savedImage;
   }
 
   static async getAllImages() {
