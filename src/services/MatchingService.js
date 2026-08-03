@@ -3,6 +3,7 @@ import PostEmbeddingService from "./PostEmbeddingService.js";
 import ImageMetadataService from "./ImageMetadataService.js";
 
 import cosineSimilarity from "../utils/cosineSimilarity.js";
+import mismatchGuard from "../utils/mismatchGuard.js";
 
 class MatchingService {
   static async findBestMatch(postId) {
@@ -38,7 +39,21 @@ class MatchingService {
       }
     }
 
-    return bestMatch;
+    const validation = mismatchGuard(bestMatch);
+
+    if (!validation.accepted) {
+      return {
+        accepted: false,
+        reason: validation.reason,
+      };
+    }
+
+    return {
+      accepted: true,
+      similarity: bestMatch.similarity,
+      imageId: bestMatch.imageId,
+      metadata: bestMatch.metadata,
+    };
   }
 }
 
