@@ -1,6 +1,7 @@
 import ImageEmbeddingService from "./ImageEmbeddingService.js";
 import PostEmbeddingService from "./PostEmbeddingService.js";
 import ImageMetadataService from "./ImageMetadataService.js";
+import SuggestionService from "./SuggestionService.js";
 
 import cosineSimilarity from "../utils/cosineSimilarity.js";
 import mismatchGuard from "../utils/mismatchGuard.js";
@@ -48,10 +49,17 @@ class MatchingService {
       };
     }
 
+    const suggestion = await SuggestionService.create({
+      postId,
+      imageId: bestMatch.imageId,
+      similarity: bestMatch.similarity,
+      explanation: "Matched using semantic similarity.",
+      status: "PENDING",
+    });
+
     return {
       accepted: true,
-      similarity: bestMatch.similarity,
-      imageId: bestMatch.imageId,
+      suggestion,
       metadata: bestMatch.metadata,
     };
   }
