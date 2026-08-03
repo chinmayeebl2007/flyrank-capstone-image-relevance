@@ -1,6 +1,7 @@
 import ImageEmbeddingService from "./ImageEmbeddingService.js";
 import PostEmbeddingService from "./PostEmbeddingService.js";
 import ImageMetadataService from "./ImageMetadataService.js";
+import BlogPostService from "./BlogPostService.js";
 import SuggestionService from "./SuggestionService.js";
 
 import cosineSimilarity from "../utils/cosineSimilarity.js";
@@ -8,6 +9,12 @@ import mismatchGuard from "../utils/mismatchGuard.js";
 
 class MatchingService {
   static async findBestMatch(postId) {
+    const post = await BlogPostService.getPostById(postId);
+
+    if (!post) {
+      throw new Error("Blog post not found.");
+    }
+
     const postEmbedding = await PostEmbeddingService.getByPostId(postId);
 
     if (!postEmbedding) {
@@ -40,7 +47,7 @@ class MatchingService {
       }
     }
 
-    const validation = mismatchGuard(bestMatch);
+    const validation = mismatchGuard(bestMatch, post);
 
     if (!validation.accepted) {
       return {
@@ -53,7 +60,7 @@ class MatchingService {
       postId,
       imageId: bestMatch.imageId,
       similarity: bestMatch.similarity,
-      explanation: "Matched using semantic similarity.",
+      explanation: validation.reason,
       status: "PENDING",
     });
 
@@ -61,6 +68,7 @@ class MatchingService {
       accepted: true,
       suggestion,
       metadata: bestMatch.metadata,
+      similarity: bestMatch.similarity,
     };
   }
 }
