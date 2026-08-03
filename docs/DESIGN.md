@@ -29,10 +29,43 @@ This project is not intended to build a complete frontend application. It does n
 ## Non Functional Requirements
 
 ---
-
 ## High Level Workflow
 
----
+1. Images are collected and stored in the image dataset.
+
+2. A background processing job picks up each image and sends it to the Gemini Vision model.
+
+3. The AI analyzes the image and returns structured metadata, including:
+   - Subject
+   - Category
+   - Attributes
+   - Caption
+   - Confidence Score
+
+4. Every AI response is validated against a predefined schema. Invalid responses are rejected and retried instead of being stored.
+
+5. The validated image metadata is saved in the PostgreSQL database.
+
+6. An embedding is generated from the image caption and stored for semantic search.
+
+7. Blog posts are added to the system and embeddings are generated from their content.
+
+8. When a user requests image recommendations for a blog post, the system compares the blog post embedding with all image embeddings using semantic similarity.
+
+9. The retrieved images are ranked from the highest similarity score to the lowest.
+
+10. Before returning the best match, the mismatch guard checks:
+    - Image category
+    - Extracted subject
+    - Confidence score
+    - Similarity threshold
+
+11. If all validation rules pass, the system recommends the image with an explanation.
+
+12. If no image satisfies the validation rules, the system returns "No confident match found" along with the reason for rejection.
+
+13. A review API allows a human reviewer to inspect, approve, or reject the recommendation.
+
 
 ## Architecture
 
