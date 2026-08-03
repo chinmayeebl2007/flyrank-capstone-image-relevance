@@ -1,5 +1,8 @@
 import { Router } from "express";
 
+import imageRoutes from "./imageRoutes.js";
+import blogRoutes from "./blogRoutes.js";
+
 const router = Router();
 
 router.get("/", (req, res) => {
@@ -10,5 +13,9 @@ router.get("/", (req, res) => {
     status: "Running",
   });
 });
+
+router.use("/images", imageRoutes);
+
+router.use("/posts", blogRoutes);
 
 export default router;
