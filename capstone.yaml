@@ -1,0 +1,70 @@
+name: AI Image Understanding & Content Matching Engine
+
+description: >
+  Backend AI system that automatically understands images using Gemini Vision,
+  generates structured metadata, creates semantic embeddings, recommends the
+  best image for blog posts, rejects poor matches using a mismatch guard,
+  records AI cost logs, and provides a human review workflow.
+
+language: Node.js
+
+framework: Express.js
+
+database: PostgreSQL
+
+run: npm run dev
+
+test: npm test
+
+seed: Manual API requests using Postman
+
+base_url: http://localhost:3000
+
+endpoints:
+  - GET /api
+
+  - POST /api/images/upload
+  - GET /api/images
+  - GET /api/images/:id
+
+  - GET /api/metadata
+  - GET /api/metadata/:imageId
+
+  - POST /api/posts
+  - GET /api/posts
+  - GET /api/posts/:id
+
+  - GET /api/match/:postId
+
+  - POST /api/review/approve
+  - POST /api/review/reject
+  - GET /api/review/history
+
+  - POST /api/jobs/process-images
+  - GET /api/jobs/status
+
+  - GET /api/costs
+
+ai:
+  vision_model: gemini-2.5-flash
+  embedding_model: gemini-embedding-001
+
+features:
+  - Image Upload
+  - AI Image Understanding
+  - Structured Metadata Extraction
+  - Zod Schema Validation
+  - PostgreSQL Storage
+  - Image Embeddings
+  - Blog Embeddings
+  - Semantic Matching
+  - Cosine Similarity
+  - Mismatch Guard
+  - Suggestion Storage
+  - Review Workflow
+  - Background Jobs
+  - AI Cost Logging
+
+author: Chinmayee B L
+
+license: MIT
