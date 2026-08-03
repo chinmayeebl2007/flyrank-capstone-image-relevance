@@ -1,38 +1,39 @@
 # EVIDENCE
 
-This document provides evidence that each core requirement of the AI Image Understanding & Content Matching Engine has been implemented and verified.
+This document provides implementation evidence for the AI Image Understanding & Content Matching Engine. Each core backend requirement was implemented, tested, and verified through API execution, database inspection, or automated testing.
 
 ---
 
 # 1. Image Upload
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-- Successfully uploaded images using:
+Successfully uploaded images using:
 
 ```
 POST /api/images/upload
 ```
 
-Result
+### Verification
 
-- Images are stored in PostgreSQL.
-- Images are stored in the local uploads directory.
-- Initial processing status is assigned successfully.
+- Images are stored in the `images` table.
+- Images are saved in the local upload directory.
+- Each uploaded image receives a unique UUID.
+- Processing status is initialized successfully.
 
 ---
 
 # 2. AI Image Understanding
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Gemini Vision successfully analyzes uploaded images and returns structured metadata.
+Gemini Vision analyzes uploaded images and generates structured metadata.
 
-Example Output
+### Example Output
 
 ```json
 {
@@ -52,84 +53,143 @@ Example Output
 
 # 3. Schema Validation
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-All Gemini responses are validated using Zod before being stored in the database.
+All AI-generated metadata is validated using Zod before database insertion.
+
+Validation includes:
+
+- subject
+- category
+- attributes
+- caption
+- confidence
+
+Invalid responses are rejected before storage.
 
 ---
 
 # 4. Metadata Storage
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Metadata is successfully stored inside the `image_metadata` table and verified using pgAdmin.
+Generated metadata is stored inside the PostgreSQL table:
+
+```
+image_metadata
+```
+
+Verified using:
+
+- pgAdmin
+- GET `/api/metadata`
 
 ---
 
-# 5. Blog API
+# 5. Blog Post API
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Successfully created and retrieved blog posts using:
+Implemented endpoints:
 
 ```
 POST /api/posts
+
 GET /api/posts
+
+GET /api/posts/:id
+```
+
+Blog posts are stored successfully inside:
+
+```
+blog_posts
 ```
 
 ---
 
 # 6. Embedding Generation
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Image embeddings are stored inside:
+Semantic embeddings are generated for:
+
+### Images
+
+Stored inside:
 
 ```
 image_embeddings
 ```
 
-Blog embeddings are stored inside:
+### Blog Posts
+
+Stored inside:
 
 ```
 post_embeddings
 ```
 
+Embedding generation was verified through successful API execution and database inspection.
+
 ---
 
 # 7. Semantic Matching
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-The endpoint
+Implemented endpoint:
 
 ```
 GET /api/match/:postId
 ```
 
-returns the highest-ranked image based on cosine similarity.
+The matching engine:
+
+- retrieves embeddings
+- computes cosine similarity
+- ranks candidate images
+- returns the highest-ranked recommendation
+
+Similarity scores are included in the API response.
 
 ---
 
 # 8. Mismatch Guard
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-The mismatch guard rejects recommendations below the configured similarity or confidence thresholds.
+The mismatch guard validates:
 
-Example
+- similarity threshold
+- confidence threshold
+- subject consistency
+- category consistency
+
+Recommendations violating these rules are rejected.
+
+### Example
+
+```json
+{
+  "accepted": false,
+  "reason": "Subject mismatch detected."
+}
+```
+
+or
 
 ```json
 {
@@ -142,19 +202,31 @@ Example
 
 # 9. Suggestion Storage
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Accepted recommendations are stored inside the `suggestions` table.
+Accepted image recommendations are stored inside:
+
+```
+suggestions
+```
+
+Stored information includes:
+
+- image id
+- blog post id
+- similarity score
+- explanation
+- status
 
 ---
 
 # 10. Review Workflow
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
 Implemented endpoints:
 
@@ -166,15 +238,30 @@ POST /api/review/reject
 GET /api/review/history
 ```
 
-Review decisions are stored in the `reviews` table.
+Review decisions are persisted inside:
+
+```
+reviews
+```
+
+Each review is linked to its corresponding suggestion through a foreign-key relationship.
 
 ---
 
-# 11. Background Jobs
+# 11. Background Processing
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
+
+Implemented background image-processing workflow.
+
+Features include:
+
+- image processing queue
+- retry mechanism
+- processing status tracking
+- REST endpoints for job monitoring
 
 Implemented endpoints:
 
@@ -188,11 +275,23 @@ GET /api/jobs/status
 
 # 12. AI Cost Logging
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-Gemini API usage is recorded inside the `ai_cost_logs` table.
+AI usage statistics are recorded inside:
+
+```
+ai_cost_logs
+```
+
+Tracked information includes:
+
+- AI service
+- operation
+- estimated tokens
+- estimated cost
+- timestamp
 
 Verified using:
 
@@ -204,11 +303,13 @@ GET /api/costs
 
 # 13. PostgreSQL Database
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-The database contains the following tables:
+The project stores data inside PostgreSQL.
+
+Verified tables:
 
 - images
 - image_metadata
@@ -219,33 +320,42 @@ The database contains the following tables:
 - reviews
 - ai_cost_logs
 
+Verified using pgAdmin.
+
 ---
 
 # 14. Layered Architecture
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
-The backend is organized into:
+The backend follows a modular layered architecture.
+
+Project structure includes:
 
 - Config
 - Controllers
-- Models
-- Services
-- Routes
-- Middleware
-- Schemas
-- Utils
 - Database
+- Jobs
+- Middleware
+- Models
+- Prompts
+- Repositories
+- Routes
+- Schemas
+- Services
+- Utils
+
+Responsibilities are separated across layers to improve maintainability.
 
 ---
 
 # 15. Automated Tests
 
-Status: ✅ Completed
+**Status:** ✅ Completed
 
-Evidence
+## Evidence
 
 Executed:
 
@@ -253,32 +363,111 @@ Executed:
 npm test
 ```
 
-Output:
+Result:
 
 ```text
-======================================
- AI Image Understanding Capstone Test
-======================================
-✓ Server configuration loaded
-✓ PostgreSQL connection configured
-✓ Gemini configuration loaded
-✓ Image upload API available
-✓ Metadata extraction service available
-✓ Embedding service available
-✓ Matching service available
-✓ Mismatch guard available
-✓ Suggestion service available
-✓ Review service available
-✓ Background job service available
-✓ AI cost logging available
+PASS tests/schemaValidation.test.js
+PASS tests/mismatchGuard.test.js
+PASS tests/cosineSimilarity.test.js
 
-All basic backend tests passed.
+Test Suites: 3 passed, 3 total
+Tests:       8 passed, 8 total
+Snapshots:   0 total
 ```
+
+All automated backend tests completed successfully.
+
+---
+
+# 16. Evaluation
+
+**Status:** ✅ Completed
+
+## Evidence
+
+Executed:
+
+```bash
+npm run evaluate
+```
+
+Result:
+
+```text
+========== Evaluation ==========
+
+Post: Red Fox
+Expected: red fox
+Predicted: red fox
+Result: PASS
+
+Post: Sunflower
+Expected: sunflower
+Predicted: sunflower
+Result: PASS
+
+Post: Golden Retriever
+Expected: golden retriever
+Predicted: golden retriever
+Result: PASS
+
+Post: Bald Eagle
+Expected: bald eagle
+Predicted: bald eagle
+Result: PASS
+
+Post: Brown Bear
+Expected: brown bear
+Predicted: brown bear
+Result: PASS
+
+===============================
+Top-1 Precision: 100.00%
+===============================
+```
+
+Evaluation Dataset:
+
+- 5 labeled blog posts
+
+Matching Strategy:
+
+- Cosine Similarity
+- Similarity Threshold
+- Confidence Threshold
+- Subject Validation
+- Category Validation
 
 ---
 
 # Overall Status
 
-✅ Backend implementation completed successfully.
+✅ Image upload completed.
 
-All major backend requirements described in the capstone have been implemented, verified through API testing, and documented.
+✅ AI image understanding completed.
+
+✅ Structured metadata generation completed.
+
+✅ Zod schema validation completed.
+
+✅ PostgreSQL integration completed.
+
+✅ Image and blog embedding generation completed.
+
+✅ Semantic matching implemented.
+
+✅ Mismatch guard implemented.
+
+✅ Suggestion storage implemented.
+
+✅ Human review workflow implemented.
+
+✅ Background processing implemented.
+
+✅ AI cost logging implemented.
+
+✅ Automated backend tests passed.
+
+✅ Evaluation dataset completed with Top-1 Precision measurement.
+
+The backend implementation satisfies the major functional requirements of the capstone and has been verified through API testing, database inspection, automated tests, and evaluation.

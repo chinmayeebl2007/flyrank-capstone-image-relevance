@@ -1,6 +1,6 @@
 # AI Image Understanding & Content Matching Engine
 
-An AI-powered backend system that automatically understands images, generates structured metadata, creates semantic embeddings, and recommends the most relevant image for a blog post. The system uses a mismatch guard to reject incorrect recommendations and provides a review workflow for manual approval.
+An AI-powered backend system that automatically understands uploaded images, generates structured metadata, creates semantic embeddings, and recommends the most relevant image for a blog post. The system includes mismatch detection, background processing, and a human review workflow to improve recommendation quality.
 
 ---
 
@@ -13,12 +13,17 @@ An AI-powered backend system that automatically understands images, generates st
 - Blog post embedding generation
 - Semantic image matching
 - Cosine similarity ranking
-- Mismatch guard
+- Similarity threshold validation
+- Confidence threshold validation
+- Subject mismatch detection
+- Category mismatch detection
 - AI suggestion storage
 - Human review workflow
-- Background job APIs
+- Background job processing with retries
 - AI cost logging
 - PostgreSQL database
+- Automated backend tests
+- Evaluation dataset with Top-1 Precision measurement
 - Modular layered architecture
 
 ---
@@ -26,7 +31,7 @@ An AI-powered backend system that automatically understands images, generates st
 # Tech Stack
 
 | Component | Technology |
-|----------|------------|
+|-----------|------------|
 | Backend | Node.js |
 | Framework | Express.js |
 | Database | PostgreSQL |
@@ -44,8 +49,8 @@ An AI-powered backend system that automatically understands images, generates st
 ```text
 .
 ├── docs/
+├── evaluation/
 ├── images/
-├── posts/
 ├── src/
 │   ├── config/
 │   ├── controllers/
@@ -64,6 +69,7 @@ An AI-powered backend system that automatically understands images, generates st
 ├── BUILDLOG.md
 ├── EVIDENCE.md
 ├── capstone.yaml
+├── LICENSE
 └── README.md
 ```
 
@@ -72,23 +78,28 @@ An AI-powered backend system that automatically understands images, generates st
 # Architecture
 
 ```text
-                   Client
-                      │
-                      ▼
-               Express REST API
-                      │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
-  Controllers     Services      Background Jobs
-                      │
-        ┌─────────────┼─────────────┐
-        ▼             ▼             ▼
- Gemini Vision   Embeddings   Matching Engine
-                      │
-               Mismatch Guard
-                      │
-                      ▼
-               PostgreSQL Database
+                    Client
+                       │
+                       ▼
+                Express REST API
+                       │
+                 Route Handlers
+                       │
+                 Controller Layer
+                       │
+                  Service Layer
+        ┌──────────────┼──────────────┐
+        ▼              ▼              ▼
+  Gemini Vision   Embeddings    Matching Engine
+                                      │
+                                      ▼
+                             Mismatch Guard
+                                      │
+                                      ▼
+                              Review Workflow
+                                      │
+                                      ▼
+                              PostgreSQL Database
 ```
 
 ---
@@ -149,7 +160,7 @@ An AI-powered backend system that automatically understands images, generates st
 # Installation
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/chinmayeebl2007/flyrank-capstone-image-relevance.git
 
 cd flyrank-capstone-image-relevance
 
@@ -160,7 +171,7 @@ npm install
 
 # Environment Variables
 
-Create a `.env` file.
+Create a `.env` file using `.env.example`.
 
 ```env
 PORT=3000
@@ -174,68 +185,136 @@ DATABASE_NAME=image_relevance_db
 GEMINI_API_KEY=YOUR_API_KEY
 
 SIMILARITY_THRESHOLD=0.75
-
 CONFIDENCE_THRESHOLD=0.80
 ```
 
 ---
 
-# Run
+# Running the Project
+
+Start the development server:
 
 ```bash
 npm run dev
 ```
 
+The API will be available at:
+
+```
+http://localhost:3000
+```
+
 ---
 
-# Test
+# Demo Workflow
+
+1. Upload an image using:
+
+```
+POST /api/images/upload
+```
+
+2. Verify generated metadata:
+
+```
+GET /api/metadata
+```
+
+3. Create a blog post:
+
+```
+POST /api/posts
+```
+
+4. Find the best matching image:
+
+```
+GET /api/match/:postId
+```
+
+5. Review AI suggestions:
+
+```
+POST /api/review/approve
+POST /api/review/reject
+```
+
+---
+
+# Automated Tests
+
+Run the backend test suite:
 
 ```bash
 npm test
 ```
 
+Current status:
+
+- ✅ 3 Test Suites Passed
+- ✅ 8 Tests Passed
+
 ---
 
 # Evaluation
 
-# Evaluation
+Run the evaluation script:
 
-# Evaluation
+```bash
+npm run evaluate
+```
 
-A small labeled evaluation dataset was created to verify semantic matching performance.
+A labeled evaluation dataset is used to measure semantic matching performance.
 
 | Metric | Result |
 |---------|--------|
-| Evaluation Dataset Size | 5 Posts |
-| Top-1 Precision | 100.00% |
+| Evaluation Dataset Size | 5 Blog Posts |
+| Top-1 Precision | **100.00%** |
 | Matching Strategy | Cosine Similarity + Mismatch Guard |
 | Evaluation Script | `npm run evaluate` |
+
+---
+
+# Results
+
+- ✅ AI-generated structured metadata
+- ✅ Zod schema validation
+- ✅ Image and blog embeddings
+- ✅ Semantic similarity matching
+- ✅ Subject mismatch detection
+- ✅ Category mismatch detection
+- ✅ Human review workflow
+- ✅ Background processing
+- ✅ AI cost tracking
+- ✅ Automated backend tests
+- ✅ Evaluation dataset with Top-1 Precision
+
 ---
 
 # Current Limitations
 
-- Supports one vision model.
-- Supports one embedding model.
-- Background jobs are simulated.
-- No authentication.
+- Supports a single vision model.
+- Supports a single embedding model.
+- Background jobs use an in-memory queue rather than a production queue.
+- No authentication or authorization.
 - No frontend application.
-- Uses PostgreSQL arrays instead of a vector database.
+- Uses PostgreSQL arrays instead of a dedicated vector database.
 
 ---
 
 # Future Improvements
 
 - pgvector integration
-- Near duplicate image detection
+- Near-duplicate image detection
 - Automatic alt-text generation
-- Multiple AI providers
+- Multiple AI provider support
 - Human feedback learning
-- Dashboard and analytics
-- Real background job queue
-- Batch processing
+- Analytics dashboard
+- Production job queue (BullMQ/RabbitMQ)
+- Batch image processing
 
 ---
 
 # License
 
-MIT
+MIT License
