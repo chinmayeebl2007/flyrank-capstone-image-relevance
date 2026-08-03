@@ -198,9 +198,28 @@ npm test
 
 # Evaluation
 
-Top-1 Precision
+# Evaluation
 
-**To be measured in the evaluation phase.**
+Current Evaluation
+
+| Metric | Status |
+|---------|--------|
+| AI Image Upload | ✅ Completed |
+| AI Image Understanding | ✅ Completed |
+| Metadata Extraction | ✅ Completed |
+| Zod Schema Validation | ✅ Completed |
+| PostgreSQL Storage | ✅ Completed |
+| Image Embeddings | ✅ Completed |
+| Blog Embeddings | ✅ Completed |
+| Semantic Matching | ✅ Completed |
+| Cosine Similarity | ✅ Completed |
+| Mismatch Guard | ✅ Completed |
+| Suggestion Storage | ✅ Completed |
+| Review Workflow | ✅ Completed |
+| Background Job APIs | ✅ Completed |
+| AI Cost Logging | ✅ Completed |
+| Automated Tests | ✅ Passed |
+| Top-1 Precision | To be measured using the evaluation dataset |
 
 ---
 
