@@ -9,7 +9,7 @@ class PostEmbedding {
         post_id,
         embedding
       )
-      VALUES ($1, $2, $3)
+      VALUES ($1,$2,$3)
       RETURNING *;
       `,
       [
@@ -33,6 +33,15 @@ class PostEmbedding {
     );
 
     return result.rows[0];
+  }
+
+  static async findAll() {
+    const result = await pool.query(`
+      SELECT *
+      FROM post_embeddings;
+    `);
+
+    return result.rows;
   }
 }
 

@@ -19,6 +19,10 @@ class PostEmbeddingService {
   static async getByPostId(postId) {
     return await PostEmbedding.findByPostId(postId);
   }
+
+  static async getAll() {
+    return await PostEmbedding.findAll();
+  }
 }
 
 export default PostEmbeddingService;
